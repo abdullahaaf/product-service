@@ -36,13 +36,7 @@ class ImageController extends Controller
     {
         $imageModel = new Image();
         $payload = $request->all();
-        $uploadFolder = ('product-images');
-        $image = $request->file('file');
-        $imageUploadedPath = $image->store($uploadFolder, 'public');
-
         $imageData = $this->redefineImageData($payload, $imageModel);
-        $imageData['file'] = Storage::url(basename($imageUploadedPath));
-
         $store = $imageData::create($imageData);
         if ($store) {
             return $this->apiResponse("success add new image", 201, $payload);
@@ -86,8 +80,12 @@ class ImageController extends Controller
 
         $newimage = $request->all();
         $image->name = $newimage['name'] ?? $image->name;
-        $image->file =  $newimage['file'] ?? $image->file;
         $image->enable = $newimage['enable'] ?? $image->enable;
+
+        if ($newimage['file'] != $image->file) {
+            Storage::delete($image->file);
+            $image->file = $newimage['file'];
+        }
 
         $update = $image->save();
         if ($update) {
