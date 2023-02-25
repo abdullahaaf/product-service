@@ -15,6 +15,8 @@ class Image extends Model
     protected $primaryKey = 'id';
     protected $fillable = ['name', 'file', 'enable'];
 
+    public $timestamps = false;
+
     public function assertImageData($payload)
     {
         return [

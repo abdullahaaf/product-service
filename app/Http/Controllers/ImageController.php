@@ -37,7 +37,7 @@ class ImageController extends Controller
         $imageModel = new Image();
         $payload = $request->all();
         $imageData = $this->redefineImageData($payload, $imageModel);
-        $store = $imageData::create($imageData);
+        $store = $imageModel::create($imageData);
         if ($store) {
             return $this->apiResponse("success add new image", 201, $payload);
         }
