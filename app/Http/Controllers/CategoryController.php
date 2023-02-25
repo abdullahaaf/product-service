@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Category;
+use App\Models\CategoryProduct;
 
 class CategoryController extends Controller
 {
@@ -94,6 +95,9 @@ class CategoryController extends Controller
         if (is_null($category)) {
             return $this->apiResponse("No category available", 204);
         }
+
+        $categoryProduct = CategoryProduct::where('category_id', $id)->first();
+        $categoryProduct->delete();
 
         $category->delete();
 
