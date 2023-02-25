@@ -7,7 +7,7 @@ return [
     ],
     'validateImage' => [
         'name' => 'required',
-        'file' => 'required',
+        'file' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
         'enable' => 'required'
     ],
     'validateProduct' => [

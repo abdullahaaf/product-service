@@ -38,10 +38,20 @@ class ImageController extends Controller
     {
         $imageModel = new Image();
         $payload = $request->all();
+        $validator = Validator::make($payload, config('validation.validateImage'));
+        if ($validator->fails()) {
+            return $this->apiResponseErrorValidation($validator->errors());
+        }
+
+        $imageFile = $request->file('file');
+        $newName = rand().'.'.$imageFile->getClientOriginalExtension();
+        $imageFile->move(public_path('storage'), $newName);
+
+        $payload['file'] = strval($newName);
         $imageData = $this->redefineImageData($payload, $imageModel);
         $store = $imageModel::create($imageData);
         if ($store) {
-            return $this->apiResponse("success add new image", 201, $payload);
+            return $this->apiResponse('success add new image', 201, $payload);
         }
     }
 
@@ -75,21 +85,24 @@ class ImageController extends Controller
 
         $imageModel = new Image();
         $image = $imageModel::find($id);
+        $payload = $request->all();
 
         if (is_null($image)) {
             return $this->apiResponse("No image available", 204);
         }
 
-        $newimage = $request->all();
-        $image->name = $newimage['name'] ?? $image->name;
-        $image->enable = $newimage['enable'] ?? $image->enable;
-
-        if ($newimage['file'] != $image->file) {
+        if (isset($payload['file'])) {
             Storage::delete($image->file);
-            $image->file = $newimage['file'];
+            $imageFile = $request->file('file');
+            $newName = rand() . '.' . $imageFile->getClientOriginalExtension();
+            $imageFile->move(public_path('storage'), $newName);
         }
 
+        $image->name = $payload['name'] ?? $image->name;
+        $image->file = isset($payload['file']) ? $newName : $image->file;
+        $image->enable = $payload['enable'] ?? $image->enable;
         $update = $image->save();
+
         if ($update) {
             return $this->apiResponse("Success update image", 201, $image);
         }
@@ -120,11 +133,6 @@ class ImageController extends Controller
 
     private function redefineImageData($payload, $imageModel)
     {
-        $validator = Validator::make($payload, config('validation.validateImage'));
-        if ($validator->fails()) {
-            return $this->apiResponseErrorValidation($validator->errors());
-        } else {
-            return $imageModel->assertImageData($payload);
-        }
+        return $imageModel->assertImageData($payload);
     }
 }
