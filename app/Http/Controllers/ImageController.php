@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Image;
+use App\Models\ProductImage;
 use Illuminate\Support\Facades\Storage;
 
 class ImageController extends Controller
@@ -106,6 +107,9 @@ class ImageController extends Controller
         if (is_null($image)) {
             return $this->apiResponse("No category available", 204);
         }
+
+        $productImage = ProductImage::where('image_id', $id)->first();
+        $productImage->delete();
 
         Storage::delete($image->file);
         $image->delete();
