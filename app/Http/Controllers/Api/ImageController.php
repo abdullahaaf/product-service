@@ -119,16 +119,14 @@ class ImageController extends Controller
 
         $image = Image::find($id);
         if (is_null($image)) {
-            return $this->apiResponse("No category available", 204);
+            return $this->apiResponseError("No image available", 400);
         }
 
-        $productImage = ProductImage::where('image_id', $id)->first();
-        $productImage->delete();
-
         Storage::delete($image->file);
+        ProductImage::where('image_id', $id)->delete();
         $image->delete();
 
-        return $this->apiResponse("Success delete category", 200);
+        return $this->apiResponse("Success delete image", 200);
     }
 
     private function redefineImageData($payload, $imageModel)
