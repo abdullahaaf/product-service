@@ -29,7 +29,7 @@ class CategoryProduct extends Model
         return DB::table('category_products')
             ->where('category_products.product_id', '=', $productId)
             ->join('categories', 'category_products.category_id', '=', 'categories.id')
-            ->select('categories.name')
+            ->select('categories.id', 'categories.name')
             ->get();
     }
 }

@@ -29,7 +29,7 @@ class ProductImage extends Model
         return DB::table('product_images')
         ->where('product_images.product_id','=',$productId)
         ->join('images', 'product_images.image_id','=','images.id')
-        ->select('images.name','images.file')
+        ->select('images.id', 'images.name', 'images.file')
         ->get();
     }
 }

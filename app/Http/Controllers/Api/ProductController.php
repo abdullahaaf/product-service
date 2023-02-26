@@ -30,8 +30,10 @@ class ProductController extends Controller
             $data = [
                 'product_name' => $product['name'],
                 'product_description' => $product['description'],
+                'product_category_id' => $categoryProduct[0]->id,
                 'product_category' => $categoryProduct[0]->name,
                 'product_image' => [
+                    'image_id' => $productImage[0]->id,
                     'image_name' => $productImage[0]->name,
                     'image_file' => $productImage[0]->file
                 ]
